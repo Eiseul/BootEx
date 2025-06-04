@@ -2,7 +2,9 @@ package org.suhodo.boot01;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+@EnableJpaAuditing // BaseEntity의 새로기록날짜, 수정날짜 이벤트를 수신
 @SpringBootApplication
 public class Boot01Application {
 
