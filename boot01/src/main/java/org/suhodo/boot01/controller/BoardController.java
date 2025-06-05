@@ -6,8 +6,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.suhodo.boot01.dto.BoardDTO;
+import org.suhodo.boot01.dto.BoardListReplyCountDTO;
 import org.suhodo.boot01.dto.PageRequestDTO;
 import org.suhodo.boot01.dto.PageResponseDTO;
 import org.suhodo.boot01.service.BoardService;
@@ -27,7 +29,9 @@ public class BoardController {
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model){
         
-        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
+        // PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
+        PageResponseDTO<BoardListReplyCountDTO> responseDTO = 
+            boardService.listWithReplyCount(pageRequestDTO);
 
         log.info(responseDTO);
 
@@ -69,4 +73,50 @@ public class BoardController {
 
         return "redirect:/board/list";
     }
+
+    @GetMapping({"/read", "/modify"})
+    public void read(@RequestParam(value="bno") Long bno, PageRequestDTO pageRequestDTO, Model model){
+        BoardDTO boardDTO = boardService.readOne(bno);
+
+        log.info(boardDTO);
+
+        model.addAttribute("dto", boardDTO);
+    }
+
+    @PostMapping("/modify")
+    public String modify(PageRequestDTO pageRequestDTO,
+                        @Valid BoardDTO boardDTO,
+                        BindingResult bindingResult,
+                        RedirectAttributes redirectAttributes){
+        log.info("board modify post............" + boardDTO);
+        
+        if(bindingResult.hasErrors()){
+            log.info("has errors............");
+
+            String link = pageRequestDTO.getLink();
+            redirectAttributes.addFlashAttribute("errors", 
+                                            bindingResult.getAllErrors());
+            redirectAttributes.addAttribute("bno", boardDTO.getBno());
+
+            return "redirect:/board/modify?" + link;
+        }
+
+        boardService.modify(boardDTO);
+        redirectAttributes.addFlashAttribute("result", "modified");
+        redirectAttributes.addAttribute("bno", boardDTO.getBno());
+        return "redirect:/board/read";
+    }
+
+    @PostMapping("/remove")
+    public String remove(@RequestParam(value="bno") Long bno, RedirectAttributes redirectAttributes){
+        log.info("remove post... " + bno);
+
+        boardService.remove(bno);
+
+        redirectAttributes.addFlashAttribute("result", "removed");
+
+        return "redirect:/board/list";
+    }
+
+
 }

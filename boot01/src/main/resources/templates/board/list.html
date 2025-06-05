@@ -3,8 +3,10 @@
     layout:decorate="~{layout/basic.html}">
 
 <div layout:fragment="content">
-
     <div class="row mt-3">
+        <button style="margin: 10px;" type="button" class="btn btn-primary my-2"
+            onclick="location.href='/board/register'">Register</button>
+
         <form action="/board/list" method="get">
             <div class="col">
                 <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
@@ -47,11 +49,12 @@
                                 <th scope="col">RegDate</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody th:with="link = ${pageRequestDTO.getLink()}">
                             <tr th:each="dto:${responseDTO.dtoList}">
                                 <th scope="row">[[${dto.bno}]]</th>
                                 <td>
-                                    [[${dto.title}]]
+                                    <a th:href="|@{/board/read(bno =${dto.bno})}&${link}|" class="text-decoration-none">[[${dto.title}]] </a>
+                                    <span class="badge progress-bar-success" style="background-color: #0a53be">[[${dto.replyCount}]]</span>
                                 </td>
                                 <td>[[${dto.writer}]]</td>
                                 <td>[[${#temporals.format(dto.regDate, 'yyyy-MM-dd')}]]</td>
@@ -103,14 +106,14 @@
 
 <script layout:fragment="script" th:inline="javascript">
 
-    document.querySelector(".pagination").addEventListener("click", function(e){
+    document.querySelector(".pagination").addEventListener("click", function (e) {
         e.preventDefault();     // 해당 요소의 기본 동작을 막는다.(대신 직접 처리)
         e.stopPropagation();    // 더 이상 버블링 이벤트 전달을 중지한다.
 
         const target = e.target;    // 이벤트를 발생시킨 주체 element
 
         // <a></a>태그가 아니면 중지
-        if(target.tagName !=='A')
+        if (target.tagName !== 'A')
             return;
 
         const num = target.getAttribute("data-num");
@@ -123,7 +126,7 @@
 
     }, false);
 
-    document.querySelector(".clearBtn").addEventListener("click", function(e){
+    document.querySelector(".clearBtn").addEventListener("click", function (e) {
 
         e.preventDefault();
         e.stopPropagation();
@@ -131,14 +134,17 @@
         self.location = '/board/list';
     }, false);
 
-    const result = [[${result}]];
+    const result = [[${ result }]];
 
     console.log("result: " + result);
 
     const modal = new bootstrap.Modal(document.querySelector(".modal"));
+    const modalBody = document.querySelector(".modal-body p");
 
-    if(result)
+    if (result) {
+        modalBody.textContent = result;
         modal.show();
+    }
 
 </script>
 
