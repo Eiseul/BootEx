@@ -1,4 +1,4 @@
-package org.suhodo.boot01.dto;
+package org.suhodo.boot01.dto.upload;
 
 import java.util.List;
 

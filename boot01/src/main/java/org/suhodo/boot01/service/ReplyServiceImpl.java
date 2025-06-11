@@ -1,6 +1,6 @@
 package org.suhodo.boot01.service;
 
-// import java.lang.foreign.Linker.Option;
+import java.lang.foreign.Linker.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.suhodo.boot01.domain.Reply;
 import org.suhodo.boot01.dto.PageRequestDTO;
 import org.suhodo.boot01.dto.PageResponseDTO;
@@ -26,7 +27,7 @@ import lombok.extern.log4j.Log4j2;
 public class ReplyServiceImpl implements ReplyService{
 
     /* main에서는 bean을 주입할 때 생성자 주입 방식을 사용한다.
-     *
+     * 
      * @RequiredArgsConstructor + private final
      */
     private final ReplyRepository replyRepository;
@@ -76,7 +77,7 @@ public class ReplyServiceImpl implements ReplyService{
                                         .stream()
                                         .map(reply->modelMapper.map(reply, ReplyDTO.class))
                                         .collect(Collectors.toList());
-
+                                
         return PageResponseDTO.<ReplyDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(dtoList)
