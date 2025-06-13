@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import lombok.extern.log4j.Log4j2;
 
-// 브라우저에서 요청하는 주소를 연결하는 메서드가 존재하는 클래스스
+// 브라우저에서 요청하는 주소를 연결하는 메서드가 존재하는 클래스
 @Controller
 @Log4j2
 public class SampleController {
